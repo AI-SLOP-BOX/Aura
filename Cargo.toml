@@ -1,0 +1,6 @@
+[workspace]
+members = [
+    "aura-ui",
+    "aura-core-bridge"
+]
+resolver = "2"

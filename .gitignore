@@ -1,0 +1,45 @@
+# Aura DAW Ultimate - Professional Git Hygiene
+# HONEST FIX: Privacy Guard (Ignores local paths and build artifacts)
+
+# Build system
+build/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+*.cmake
+*.o
+*.o.d
+*.a
+bin/
+obj/
+
+# Rust (Cargo)
+target/
+**/*.rs.bk
+Cargo.lock
+
+# OS-specific
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Project artifacts
+AuraIcon.iconset/
+AuraUltimate.app/
+*.log
+
+# Personal/Config
+.env
+config.json
+*.local
