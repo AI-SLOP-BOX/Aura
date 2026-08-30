@@ -1173,8 +1173,6 @@ fn export_filename(name: &str) -> String {
     let result: String = name.chars().take(80).map(|character| {
         if character.is_ascii_alphanumeric() || matches!(character, '-' | '_' | '.') {
             character
-        } else if character.is_whitespace() {
-            '_'
         } else {
             '_'
         }
