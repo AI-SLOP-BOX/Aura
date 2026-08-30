@@ -4,6 +4,10 @@ use std::collections::VecDeque;
 pub struct MidiMonitorEvent { pub timestamp: u64, pub status: u8, pub data1: u8, pub data2: u8 }
 impl MidiMonitorEvent { pub fn validate(&self) -> bool { self.status & 0x80 != 0 && self.data1 < 128 && self.data2 < 128 } pub fn channel(&self) -> Option<u8> { ((self.status & 0xF0) >= 0x80 && (self.status & 0xF0) <= 0xE0).then_some(self.status & 0x0F) } pub fn is_realtime(&self) -> bool { matches!(self.status, 0xF8..=0xFF) } pub fn raw_bytes(&self) -> [u8; 3] { [self.status, self.data1, self.data2] } pub fn message_type(&self) -> Option<&'static str> { match self.status & 0xF0 { 0x80 => Some("note_off"), 0x90 => Some(if self.data2 == 0 { "note_off" } else { "note_on" }), 0xA0 => Some("poly_pressure"), 0xB0 => Some("control_change"), 0xC0 => Some("program_change"), 0xD0 => Some("channel_pressure"), 0xE0 => Some("pitch_bend"), _ => None } } }
 pub struct MidiMonitor { events: VecDeque<MidiMonitorEvent>, capacity: usize }
+impl Default for MidiMonitor {
+    fn default() -> Self { Self::new() }
+}
+
 impl MidiMonitor {
     pub fn new() -> Self { Self { events: VecDeque::with_capacity(4096), capacity: 4096 } }
     pub fn capacity(&self) -> usize { self.capacity }
