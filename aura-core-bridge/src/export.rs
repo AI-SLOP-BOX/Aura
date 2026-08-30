@@ -380,12 +380,8 @@ pub fn read_wave64_float32(path: &Path) -> Result<(u32, u16, Vec<f32>), WavExpor
         return Err(WavExportError::IncompleteFrame);
     }
     let mut samples = Vec::with_capacity(payload.len() / 4);
-    for chunk in payload.chunks_exact(4) {
-        let value = f32::from_le_bytes(
-            chunk
-                .try_into()
-                .map_err(|_| WavExportError::UnsupportedFormat)?,
-        );
+    for chunk in payload.as_chunks::<4>().0 {
+        let value = f32::from_le_bytes(*chunk);
         if !value.is_finite() {
             return Err(WavExportError::NonFiniteSample);
         }
