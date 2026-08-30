@@ -36,7 +36,26 @@ impl WorkspaceRegistry {
 
 impl WorkspaceLayout {
     pub fn validate(&self) -> bool { !self.name.trim().is_empty() && self.name.len() <= 128 && self.windows.len() <= 256 && self.scale.is_finite() && (0.25..=4.0).contains(&self.scale) && self.windows.iter().all(|w| !w.id.trim().is_empty() && w.id.len() <= 128 && w.width > 0 && w.height > 0 && w.width <= 16384 && w.height <= 16384) && self.windows.iter().enumerate().all(|(i,w)| self.windows[..i].iter().all(|p| p.id != w.id)) }
-    pub fn upsert_window(&mut self, window: WorkspaceWindow) -> bool { if window.id.trim().is_empty() || window.id.len() > 128 || window.id.contains('\0') || window.width == 0 || window.height == 0 || window.width > 16384 || window.height > 16384 { return false; } if let Some(existing) = self.windows.iter_mut().find(|w| w.id == window.id) { *existing = window; } else if self.windows.len() < 256 { self.windows.push(window); } else { return false; } self.validate() }
+    pub fn upsert_window(&mut self, window: WorkspaceWindow) -> bool {
+        if window.id.trim().is_empty()
+            || window.id.len() > 128
+            || window.id.contains('\0')
+            || window.width == 0
+            || window.height == 0
+            || window.width > 16384
+            || window.height > 16384
+        {
+            return false;
+        }
+        if let Some(existing) = self.windows.iter_mut().find(|existing| existing.id == window.id) {
+            *existing = window;
+        } else if self.windows.len() < 256 {
+            self.windows.push(window);
+        } else {
+            return false;
+        }
+        self.validate()
+    }
     pub fn remove_window(&mut self, id: &str) -> bool { let before = self.windows.len(); self.windows.retain(|w| w.id != id); before != self.windows.len() }
     pub fn set_visible(&mut self, id: &str, visible: bool) -> bool { self.windows.iter_mut().find(|w| w.id == id).map(|w| { w.visible = visible; true }).unwrap_or(false) }
     pub fn to_json(&self) -> Result<String, String> {
